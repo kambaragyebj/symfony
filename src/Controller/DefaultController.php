@@ -54,4 +54,22 @@ class DefaultController extends AbstractController
         $path =  $this->getParameter('download_directory');
         return $this->file($path.'part2.pdf');
     }
+
+    
+     /**
+     * @Route("/redirect-test")
+     */
+    public function redirectTest()
+    {
+        return $this->redirectToRoute('route_to_redirect', array('param' => 10));
+    }
+
+     /**
+     * @Route("/url-to-redirect/{param?}", name="route_to_redirect")
+     */
+    public function methodToRedirect()
+    {
+        exit('Test redirection');
+    }
+
 }
