@@ -44,4 +44,14 @@ class DefaultController extends AbstractController
             UrlGeneratorInterface::ABSOLUTE_URL
         ));
     }
+
+
+    /**
+     * @Route("/download")
+     */
+    public function download()
+    {
+        $path =  $this->getParameter('download_directory');
+        return $this->file($path.'part2.pdf');
+    }
 }
