@@ -55,7 +55,7 @@ class DefaultController extends AbstractController
         return $this->file($path.'part2.pdf');
     }
 
-    
+
      /**
      * @Route("/redirect-test")
      */
@@ -70,6 +70,26 @@ class DefaultController extends AbstractController
     public function methodToRedirect()
     {
         exit('Test redirection');
+    }
+
+    /**
+     * @Route("/forwarding-to-controller")
+     */
+    public function forwardingToController()
+    {
+        $response = $this->forward(
+            'App\Controller\DefaultController::methodToForwardTo',
+            array('param'  => '1')
+        );
+        return $response;
+    }
+
+    /**
+     * @Route("/url-to-forward-to/{param?}", name="route_to_forward_to")
+     */
+    public function methodToForwardTo($param)
+    {
+        exit('Test controller forwarding - '.$param);
     }
 
 }
