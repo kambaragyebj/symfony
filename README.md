@@ -500,7 +500,14 @@ Then in Default controller creat the below method
 
 
 
+------------------------------SUBLIME TWIG ----------------------------------------
 
+To apply syntax highlighting on your Twig HTML files :
+
+    Open a .html.twig file
+    Go to View menu → Syntax → Open all with current extension as → HTML (Twig)
+
+That’s it. It should work by now.
 
 
 

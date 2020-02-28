@@ -17,7 +17,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/default", name="default")
+     * @Route("/page", name="default")
      */
     public function index(SessionInterface $session)
     {
