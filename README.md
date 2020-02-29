@@ -496,20 +496,160 @@ Then in Default controller creat the below method
 
 
 
+----------------------------------- GENERATE URL _----------------------------------------------
+
+
+  /**
+     * @Route("/generate-url/{param?}", name="generate_url")
+     */
+    public function generate_url()
+    {
+        exit($this->generateUrl(
+            'generate_url',
+            array('param' => 10),
+            UrlGeneratorInterface::ABSOLUTE_URL
+        ));
+    }
+
+
+--------------------------------------- DOWNLOAD FILE --------------------------------------
+
+
+ /**
+     * @Route("/download")
+     */
+    public function download()
+    {
+        $path =  $this->getParameter('download_directory');
+        return $this->file($path.'file.pdf');
+    }
+}
+
+and in service yml file define the directory 
+
+parameters:
+  download_directory: '../public/'
 
 
 
 
-------------------------------SUBLIME TWIG ----------------------------------------
+------------------------------------- TWIG INSTALLATION ----------------------------
+
+https://twig.symfony.com/doc/3.x/
+
+/////////sublime format color
 
 To apply syntax highlighting on your Twig HTML files :
 
     Open a .html.twig file
     Go to View menu → Syntax → Open all with current extension as → HTML (Twig)
 
-That’s it. It should work by now.
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+Check the documentation 
+
+
+https://twig.symfony.com/doc/3.x/
+
+{% for user in users if user.name =='Susan' %}
+
+  {{user.name}}
+{%else%}
+
+   No uses found
+
+ {%enm%}
+1. include function used to import another twig view
+
+     {{include('inludes/subview.html.twig', {'users': user})}}
+
+
+2. to avoid overiding in twig use parent function
+
+{{parent()}}
+
+3. Range for loop //https://twig.symfony.com/doc/3.x/templates.html#other-operators
+
+   {% for i in 1..10 %}
+
+   <div class="{{cycle(['even','odd'],i )}}">
+
+     {{i}}
+
+    </di>
+
+
+   {% endfor %}
+
+
+4. Path funtion takes the name of the route 
+
+  {{path('home')}}  /home  not full path.
+
+  {{url('default')} /http://localhost:8000/home full path
+
+  {{asset('images/logo.png')}} links to image or css or js file points to public folder
+
+  {{absolute_url(asset('images/logo.png'))}}
+
+  <img src="{{absolute_url(asset('images/logo.png'))}}" alt="Jackson image">
+
+ 
+
+ to use asset function 
+
+  **** composer require symfony/asset *************************
+
+  
+---------------------- ESCAPING STRING ---------------------------------------------
+
+
+{% set string = "some thing \n from \n databses %}
+
+
+now in javaacript variable 
+
+<script>
+var route = "{{ string }}"; this one will have error 
+
+var route = "{{ string|escape('js') }}"; // escape string 
+
+             "{{ string|escape('html') }}"
+
+             "{{ string|escape('css') }}"
+
+alert(route);
+</script>
 
 
 
+---------------------------------VIEWS GLOBAL VARIABLE ------------------------------------------
+
+-  side bar in every page.
+
+- make a global variables
+
+open twig yaml  file and define global variable 
 
 
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    globals:
+        ga_code: GAcode-123
+
+and then in index.html.twig
+
+ <p>The google tracking code is: {{ ga_code }}</p>
+
+
+
+--------------------------------------------VIEW Webpack Encore Manage Css and Javacript ---------------------------------
+https://symfony.com/doc/current/frontend/encore/installation.html
+install npm and node js
+1. npm init 
+2. npm install @symfony/webpack-encore --save-dev
+3. npm install --save jquery
+4. create webpack.config.js

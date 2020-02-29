@@ -1,0 +1,28 @@
+{
+  "name": "my_project_name",
+  "version": "1.0.0",
+  "description": "Micro- framework . Install the needed packages slowly",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kambaragyebj/symfony.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kambaragyebj/symfony/issues"
+  },
+  "homepage": "https://github.com/kambaragyebj/symfony#readme",
+  "dependencies": {
+    "jquery": "^3.4.1"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.28.3"
+  }
+}
