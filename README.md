@@ -653,3 +653,323 @@ install npm and node js
 2. npm install @symfony/webpack-encore --save-dev
 3. npm install --save jquery
 4. create webpack.config.js
+
+5. compile and minify the changes in the custom js and custom css
+
+create bin folder and in bin folder create  css and js folder and in both file create custom css and custom js ...first write in these files and when u run the ./node command it will be automatically minfied in th public folder
+
+./node_modules/.bin/encore production 
+
+./node_modules/.bin/encore dev --watch | if u run it quite aften ; it watch changes in js and css
+
+
+################Error ####################
+
+Uncaught RefrenceError: $ is not defined:  fix in build  custom js file add global.$ = global.jQuery =$;
+
+
+---------------------USING APP variable -------------------------
+Install:
+
+composer require symfony/security-bundle
+
+in index.html.twig
+
+{{app.user}}
+
+{{app.request.get('param')}} object | even post parameter
+
+{{app.session}}  | access to session data
+
+
+-------------------------------------VIEW EMBEDDED IN CONTROLLER -------------------------------
+
+Displaying side bar . is useful to use render NO ROUTE
+
+
+    public function mostPopularPosts($number = 3)
+    {
+         // database call:
+         $posts = ['post 1', 'post 2', 'posts 3', 'posts 4'];
+         return $this->render('default/most_popular_posts.html.twig', [
+            'posts' => $posts,
+         ]);
+    }
+    
+
+
+
+in twig template in the index.html.twig
+
+
+ {{render(controller(
+        'App\\Controller\\DefaultController::mostPopularPosts',
+        { 'number': 2 }
+    ))}}
+
+
+
+create another template called most_popular and add the below
+
+
+{%  for post in posts %}
+{{post}} <br>
+{% endfor %}
+
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------DOCTRINE CRUD - CREATE --------------------------------------------
+
+
+
+   $entityManager = $this->getDoctrine()->getManager();  its used to save to the database
+
+  dump(' new use user was saved with the id '. $user->getId());
+
+     use App\Entity\User;
+
+
+    /**
+     * @Route("/home", name="default", name="home")
+     */
+    public function index(Request $request)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $user = new User();
+        $user->setName('Robert');
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        dump('A new user was saved with the id of '. $user->getId());
+
+        return $this->render('default/index.html.twig', [
+            'controller_name' => 'DefaultController'
+        ]);
+    }  
+    
+
+bin/console doctrine:schema:drop -n -q --force --full-database &&
+rm src/Migrations/*.php &&
+bin/console make:migration &&
+bin/console doctrine:migrations:migrate -n -q
+
+
+If you want to load fixtures, add to the above:
+
+&& bin/console doctrine:fixtures:load -n -q
+
+
+----- Its used to load example data into the database with fake data----
+
+
+
+ -- install :  composer require --dev doctrine/doctrine-fixtures-bundle
+
+https://symfony.com/doc/master/bundles/DoctrineFixturesBundle/index.html
+
+bin/console list doctrine ---------------------------------list of doctrine related command
+
+<?php
+
+namespace App\DataFixtures;
+
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\Persistence\ObjectManager;
+use App\Entity\User;
+
+class AppFixtures extends Fixture
+{
+    public function load(ObjectManager $manager)
+    {
+        // $product = new Product();
+        // $manager->persist($product);
+        for($i=1; $i<=5; $i++)
+        {
+            $user = new User();
+            $user->setName('name - ' . $i);
+            $manager->persist($user);
+        }
+
+        $manager->flush();
+    }
+}
+
+---- 
+
+
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------DOCTRINE CRUD - READ --------------------------------------------
+
+ $repository = $this->getDoctrine()->getRepository(User::class); Get data from the database
+
+    /**
+     * @Route("/home", name="default", name="home")
+     */
+    public function index(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository(User::class);
+
+
+        // $user = $repository->find(1);
+        // $user = $repository->findOneBy(['name' => 'Robert']); by column name
+        // $user = $repository->findOneBy(['name' => 'Robert', 'id' => 5]);
+        // $users = $repository->findBy(['name' => 'Robert'],['id' => 'DESC']);
+        $users = $repository->findAll();
+        dump($users);
+        return $this->render('default/index.html.twig', [
+            'controller_name' => 'DefaultController'
+        ]);
+    }  
+    
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------DOCTRINE CRUD - UPDATE --------------------------------------------
+
+
+
+      $entityManager = $this->getDoctrine()->getManager();
+
+        $id = 1;
+        $user = $entityManager->getRepository(User::class)->find($id);
+
+        if (!$user)
+        {
+            throw $this->createNotFoundException(
+                'No user found for id '.$id
+            );
+        }
+        $user->setName('New user name!');
+        $entityManager->flush();
+
+        dump($user);
+    
+
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------DOCTRINE CRUD - DELETE --------------------------------------------
+
+
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $id = 2;
+        $user = $entityManager->getRepository(User::class)->find($id);
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+        dump($user);
+      
+    
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------DOCTRINE RAW QUERIES --------------------------------------------
+
+
+       $entityManager = $this->getDoctrine()->getManager();
+
+        $conn = $entityManager->getConnection();
+        $sql = '
+        SELECT * FROM user u
+        WHERE u.id > :id
+        ';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id' => 3]);
+
+        dump($stmt->fetchAll());
+
+
+
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------DOCTRINE PARAMETER COVERTER --------------------------------------------
+
+Fetch data without using entitymanager 
+
+1. Install package
+
+composer require sensio/framework-extra-bundle
+
+    /**
+     * @Route("/home/{id}", name="default", name="home")
+     */
+
+   public function index(Request $request, User $user)  //////////
+    {
+        // $entityManager = $this->getDoctrine()->getManager();
+        dump($user);
+        
+        return $this->render('default/index.html.twig', [
+            'controller_name' => 'DefaultController'
+        ]);
+    }
+
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------DOCTRINE LIFE CYCLE --------------------------------------------
+
+ * @ORM\HasLifecycleCallbacks() allow us to create code automatically in the respisitory
+@ORM\PrePersist // before persit is excuted
+
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue()
+    {
+        $this->createdAt = new \DateTime();
+        dump($this->createdAt);
+    }
+
+
+
+
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------DOCTRINE ONE -to MANY & MANY-to-ONE RELATIONSHIP  --------------------------------------------
+
+ USer Entity 
+
+
+   /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Video", mappedBy="user")
+     */
+    private $videos;
+
+    public function __construct()
+    {
+        $this->videos = new ArrayCollection();
+    }
+
+
+Video Entity
+
+
+ /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="videos")
+     * @ORM\JoinColumn(nullable=true)
+     */
+
+// create Video entity : bin/console make:entity Video
+
+
+
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------EMAIL -install email package and send an email-------------------------------------------
+
+
+-composer require symfony/swiftmailer-bundle
+
+swiftmailer.yaml 
+
+ 
+
+
+----------------------------------------------                  --------------------------------------------
+----------------------------------------------Profiler tool -------------------------------------------
+
+
+composer require profiler
+
