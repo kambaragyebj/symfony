@@ -22,6 +22,10 @@ class DefaultController extends AbstractController
      */
     public function index(SessionInterface $session)
     {
+       $array =['jackson','seble','Tweyambe','APo','abu','Buriwaka'];
+
+       dump($array);
+         
        /* 
        $session->set('name', 'session value');
         if($session->has('name'))
