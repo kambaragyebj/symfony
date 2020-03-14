@@ -528,3 +528,122 @@ f) composer require template
 
 9. bin/console marke:controller IndexController
 
+10 In visual studio make sure you installed PHP IntelliSene  package
+
+11. Install Security package
+a) composer require security ** Add new User class. Is the entity added by the security package. 
+
+b) php bin/console make:user
+
+12. create Authentication class
+
+a) php bin/console make:auth
+i) What style of authentication ? Chose  Login form authenticator
+ii) In CustomAuthenticator class u created , onAuthenticationSuccess -> redirect the user after successfully login in the application 
+iii)  return new RedirectResponse($this->urlGenerator->generate('index')) redirect to login page //bin/console debug:router
+
+13. Download bootrap CDN ..getbootstrap.com
+
+ a) add the libraries
+
+
+14. Go to twig.yaml
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    form_themes :['bootstrap_4_layout.html.twig']
+add 
+ form_themes :['bootstrap_4_layout.html.twig'] we need it for registration
+
+15. When u sign now it throws error of no database
+
+16. Create database
+
+a) php bin/console doctrine:database:create
+b) php bin/console doctrine:schema:update --force
+
+17. Create a registration form/Page
+
+a) Create a controller registrationController
+
+b) create a method called register(Request $request, UserPasswordEncoderInterface $passwordencoder) and in it create a form 
+
+$form = $this->createFormBuilder();
+	 ->add('username')
+         ->add('password',RepeatedType::class,[
+              'type'=>PasswordType::class,
+              'required'=>true,
+              'first_options' =>['label' =>'Password'],
+              'second_options' =>['label' =>'Comfirm Password']
+           ])
+       ->add('register',SubmitType::class, [
+              'attr =>[
+                 'class' => 'btn btn-sucess float-right'
+                ]
+            ])
+           ->getForm();
+
+         return $this->render('register/index.html.twig',[
+
+                               'form' => $form->createView()]);
+
+
+
+$form->handleRequest($request);
+if($form->isSubmitted()){
+
+ $data = $form->getData();
+
+ $user = new  User() // Save new user to the database 
+
+ $user->setUserName($data['username']);
+ $user->setPassword(
+
+     $passwordencoder->encodePassword[$user,$data['password']);
+
+ $entityManager = $this->getDoctrine()->getManager(); 
+ $entityManager->persits($user);
+ $entityManager->flush();
+
+  return $this->redirect($this->generateUrl('app_login')); redirect to login page //bin/console debug:router
+   
+
+}
+
+
+18. In the component add 
+
+a) use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+b) use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+c) use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+d) use Symfony\Component\HttpFoundation\Request;
+e) use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+e) use App\Entity\User;
+
+
+19. In the register template index html.twig
+
+
+a) {% extends 'base.html.twig' %}
+
+   {%block body %}
+
+
+    {{form(form)}} // name of the form from the register controller
+
+   {%endblock%}
+
+20. Check the route name 
+a) php bin/console debug:router
+
+21. Now we are authenticated user
+
+a) composer require profiler
+
+2. security.yaml file u can define acces control
+
+ access_control:
+  #-{path: ^/admin,roles:ROLE_ADMIN}
+  -{path: ^/index,roles:ROLE_USER} dont allow user to access index without login
+ 
