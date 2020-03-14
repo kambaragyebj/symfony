@@ -498,11 +498,33 @@ Then in Default controller creat the below method
 
 
 
+******************************************* WINDOWS *******************************
+
+1. Install xammp
+
+2. Install composer
+
+3. Install symfony webserver 
+3.1 https://symfony.com/download select for windows : Download setup.exe
+*** command composer require server does not work in version 5
+
+4. Install git
+
+5.C:\xampp\htdocs> composer create-project symfony/skeleton name_of_the_project
+
+6. cd to name_of_the_project
+
+7. start installing libraries
+
+a) composer require marker 
+b) composer require annotations 
+c) composer require template
+d) composer require form validation
+e) composer require orm
+f) composer require template
+
+8. run the server: symfony server:start 
 
 
-
-
-
-
-
+9. bin/console marke:controller IndexController
 
